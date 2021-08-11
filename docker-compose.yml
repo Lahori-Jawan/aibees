@@ -1,0 +1,57 @@
+version: '3.7'
+
+services:
+  App:
+    image: 'aib-app:${IMAGE_TAG}'
+    container_name: aib_server
+    build:
+      context: .
+      target: ${NODE_ENV}
+    volumes:
+      - .:/aibees/app
+      - /aibees/app/node_modules
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+      - docker.env
+    networks:
+      - aibees
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:12
+    container_name: aib_db
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    # extra_hosts:
+    #   - 'host.docker.internal:172.17.0.1'
+    networks:
+      - aibees
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: aib_pg_dashboard
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - '8080:80'
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - aibees
+
+volumes:
+  pgadmin-data:
+
+networks:
+  aibees:
+    external: false # false -> create own network, true -> use/connect external network
+    name: aibees-network
