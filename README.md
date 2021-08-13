@@ -8,7 +8,7 @@ npm run seed
 
 ## Enpoint to hit
 
-_POST_ http://localhost:3000/products/apply-discount
+_POST_ `http://localhost:3000/products/apply-discount`
 
 _Body_
 
